@@ -1,45 +1,58 @@
-#1
-second = int(input("초를 입력하세요"))
+# 사용자로부터 숫자를 입력받아, 홀수인지 짝수인지 판별하기
+num = int(input("숫자를 입력하세요: "))
 
-minute = second//60
-secondd = second%60
-
-print(f"{minute} 분 {secondd}초")
-
-print("----------------------------------")
-
-#2
-m=int(input("분을 입력하세요."))
-
-d=m//(24*60)
-h=(m//60)%24
-m=m%60
-
-print(f"{d}일 {h}시간 {m}분")
-
-print("----------------------------------")
-
-#3
-money = 5000000
-rate = 0.05
-
-print(f"원리금의 합계 = {money*(1+rate)**5:,.2f} 원")
-print("----------------------------------")
+if num % 2 == 0:
+    print(f"{num}은(는) 짝수입니다.")
+else:
+    print(f"{num}은(는) 홀수입니다.")
 
 
-#4
-n=100
-total = n*(n+1)/2
-print(f"{total:.0f}")
-print("----------------------------------")
+#num이 10보다 큰지 판별하여, True이면 "10보다 큽니다"를, False이면 "10보다 작거나 같습니다"를 출력
 
-#5
-포도=75
-딸기=113.5
+num = 10
+result = "10보다 큽니다" if num > 10 else "10보다 작거나 같습니다"
+print(result)
 
-포도개수=int(input("포도개수?"))
-딸기개수=int(input("딸기개수?"))
 
-print(f"{포도*포도개수 + 딸기*딸기개수:,.0f}g")
+#한줄 if문. if 앞부분이 참일때 조건. else 뒷부분이 아닐때 조건. 
+string = input("문자열을 입력하세요: ")
+length = len(string) if string else 0 #if가 string(true) 일땐 length가 string의 길이, 아니면 0
+print("문자열의 길이는", length, "입니다.")
 
-print(f"총 무게는 {포도*포도개수 + 딸기*딸기개수:,.0f}g입니다.")
+
+
+#변수 a와 b 중 값이 큰 변수를 출력하는 프로그램
+a = 10
+b = 20
+result = a if a > b else b #a>b 가 참이면 a, 거짓이면 b. 가볍게 한줄로
+print(result)
+
+
+#세 개의 수 중 가장 작은 수를 출력하는 프로그램
+
+a = 10
+b = 20
+c = 5
+min_value = a if a < b and a < c else (b if b < c else c)
+print("가장 작은 수는", min_value, "입니다.")
+
+
+
+#입력한 값이 양수, 음수, 0인지 판별하는 프로그램
+
+num = int(input("숫자를 입력하세요: "))
+sign = "양수" if num > 0 else ("음수" if num < 0 else "0")
+print(sign)
+
+
+
+
+#사용자로부터 입력받은 수가 양수인 경우에만 제곱근을 구하고, 그 외에는 "잘못된 입력입니다."라는 메시지를 출력하는 프로그램
+import math
+
+num = float(input("양수를 입력하세요: "))
+
+result = math.sqrt(num) if num > 0 else "잘못된 입력입니다."
+
+print("결과: ", result)
+

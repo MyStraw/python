@@ -2,7 +2,7 @@ import random
 import math
 
 DELTA = 0.01   # Mutation step size
-LIMIT_STUCK = 100 # Max number of evaluations enduring no improvement
+LIMIT_STUCK = 100 # Max number of evaluations enduring no improvement #정말 나아지지 않는지 최대횟수. 랜덤.
 NumEval = 0    # Total number of evaluations
 
 
@@ -18,7 +18,7 @@ def main():
     displayResult(solution, minimum)
 
 
-def createProblem(): ###
+def createProblem(): ### 똑같은 수치문제니까. 읽어오고 변수 만들고 하는건 똑같다. #최소값 찾는 알고리즘만 달라
     ## Read in an expression and its domain from a file.
     ## Then, return a problem 'p'.
     ## 'p' is a tuple of 'expression' and 'domain'.
@@ -27,6 +27,22 @@ def createProblem(): ###
     ## 'varNames' is a list of variable names.
     ## 'low' is a list of lower bounds of the varaibles.
     ## 'up' is a list of upper bounds of the varaibles.
+    fileName = "problem/" + input("Enter the filename of function:") + ".txt"
+    infile = open(fileName,'r')
+    expression = infile.readline() #txt파일 공식적힌 첫째줄
+    varName = []
+    low = []
+    up = []
+    line = infile.readline()        
+    while line != '':
+        data = line.split(',')
+        varName.append(data[0])
+        low.append(float(data[1]))
+        up.append(float(data[2]))
+        line = infile.readline() 
+             
+    infile.close()
+    domain = [varName, low, up]
     return expression, domain
 
 
@@ -34,10 +50,10 @@ def firstChoice(p):
     current = randomInit(p)   # 'current' is a list of values
     valueC = evaluate(current, p)
     i = 0
-    while i < LIMIT_STUCK:
+    while i < LIMIT_STUCK: #랜덤하게 일단 1개 썩세스 선택 하고, 좋아지기만 하면 업데이트
         successor = randomMutant(current, p)
         valueS = evaluate(successor, p)
-        if valueS < valueC:
+        if valueS < valueC: #얘는 주변에 1개 선택. 좋아지면. 즉 작아지면 좋아지는 방향. 그럼 업데이트
             current = successor
             valueC = valueS
             i = 0              # Reset stuck counter
@@ -47,6 +63,14 @@ def firstChoice(p):
 
 
 def randomInit(p): ###
+    domain = p[1] 
+    low = domain[1]
+    up = domain[2]
+    init = []
+    for i in range(len(low)): 
+        r = random.uniform(low[i], up[i]) 
+        init.append(r)
+    
     return init    # Return a random initial point
                    # as a list of values
 
@@ -64,7 +88,9 @@ def evaluate(current, p):
     return eval(expr)
 
 
-def randomMutant(current, p): ###
+def randomMutant(current, p): ### #딱 1개만 뽑아내는거. mutant는 모든 후보들 다 뽑아내는거;
+    i = random.randint(0, len(current)-1)
+    d = random.uniform(-DELTA, DELTA)    
     return mutate(current, i, d, p) # Return a random successor
 
 

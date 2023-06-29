@@ -88,9 +88,13 @@ def evaluate(current, p):
     return eval(expr)
 
 
-def randomMutant(current, p): ### #딱 1개만 뽑아내는거. mutant는 모든 후보들 다 뽑아내는거;
-    i = random.randint(0, len(current)-1)
-    d = random.uniform(-DELTA, DELTA)    
+def randomMutant(current, p): ### #딱 1개만 뽑아내는거. steepest ascent의 mutant는 모든 후보들 다 뽑아내는거;
+    i = random.randint(0, len(current)-1) #steepest ascent 후보들 중에 하나 랜덤 뽑는다 생각해~ current가 5가 나올테니 인덱스로 적용시키기 위해 -1
+    if random.uniform(0,1)>0.5: #1/2확률보다 크면
+        d = DELTA
+    else:
+        d = -DELTA    
+#    d = random.uniform(-DELTA, DELTA) #이건 내가 한겅    
     return mutate(current, i, d, p) # Return a random successor
 
 

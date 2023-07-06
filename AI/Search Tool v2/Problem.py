@@ -143,7 +143,7 @@ class Numeric(Problem): #상위클래스가 있을때. TSP와 같은 super(부�
     def report(self):    #solution은 이미 Problem에 정의됐잖아
         print()
         print("Solution found:")
-        print(self.coordinate())  # Convert list to tuple
+        print(self.coordinate())  # 변수가 있음 안되지. 밑에서 올려주잖아.
         print("Minimum value: {0:,.3f}".format(self._value)) #minimum = self._value징
         Problem.report(self) #super().report도 같다. #파이썬은 다중 상속이 되니까 이름 그대로 쓰는게 좋지 않을까.
         

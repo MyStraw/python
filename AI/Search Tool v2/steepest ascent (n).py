@@ -1,23 +1,26 @@
-from numeric import *
+from Problem import Numeric #우린 이것만 필요하다
 
 def main():
     # Create an instance of numerical optimization problem
-    p = createProblem()    # 'p': (expr, domain) #첫단계. pseudo 코드 알고리즘 처럼
+    p = Numeric() #인스턴스 생성 이렇게 바로 해버리네. p 인스턴스 만들었으니까 다 바까봐
+    p.setVariable()  #createProblem을 이걸로
     # Call the search algorithm
-    solution, minimum = steepestAscent(p) #직접 구현해야.
+    solution, minimum = steepestAscent(p) #p라는 인스턴스에 모든 정보가 다 들어가있다.
     # Show the problem and algorithm settings #출력파트. 이 아래.
-    describeProblem(p) 
-    displaySetting()
+    p.describe()  #describeProblem(p) p도 여전히 필요없다. 다 들어가있어.
+    displaySetting(p) #안에 들어가보면 delta 값도 필요하고 하니까 일단 p 넣어보자. p에 delta값이 있다.
     # Report results
-    displayResult(solution, minimum)
+    p.storeResult(solution, minimum) #외부에서 steepest 돌린거니까, 업데이트 해줘야지. Problem.py의 solution, value에 업뎃해야 하니까. 그래서 storeResult를 만들어놨잖아
+    
+    p.report()
 
 
 def steepestAscent(p): #p가 주어지면 전체적으로 반복 #얘는 주변 후보들 다 찾아봐
-    current = randomInit(p) # 'current' is a list of values #시작점.->랜덤하게 뽑는다.
-    valueC = evaluate(current, p) #p에 expression, 도메인이랑~ 들어가있다
+    current = p.randomInit() # 'current' is a list of values #시작점.->랜덤하게 뽑는다.
+    valueC = p.evaluate(current) #p업새고
     while True:
-        neighbors = mutants(current, p) #주변의 후보'들'을 다 찾아본다.
-        successor, valueS = bestOf(neighbors, p) #제일 좋은거 찾아내
+        neighbors = p.mutants(current) #p없애고
+        successor, valueS = bestOf(neighbors,p) #제일 좋은거 찾아내
         if valueS >= valueC: #현재 다음으로 가야할 후보를 찾았으니, 현재보다 좋아지는지 판단해야지. valueS(후보값) 이 valueC(현재값) 보다 좋으면 나빠지는거니 탈출.
             break
         else:
@@ -25,31 +28,24 @@ def steepestAscent(p): #p가 주어지면 전체적으로 반복 #얘는 주변 
             valueC = valueS #현재값을 후보로. 업데이트 된걸로 또 돌아주고.
     return current, valueC
 
-def mutants(current, p): ### p에서 정보 끄집어내기
-    neighbors=[]
-    for i in range(len(current)): #커런트, 현재값이 갯수만큼 있을거니 current 넣어도 되겠네
-        mutant = mutate(current, i, DELTA , p) #(현재 해당하는 값, 0번째 1번째, 더해주는값, problem) 이렇게 1개 찾음
-        neighbors.append(mutant)
-        mutant = mutate(current, i, -DELTA , p) #빼는값도 해줘야지
-        neighbors.append(mutant)
-    return neighbors     # Return a set of successors
+
 
 def bestOf(neighbors, p): ###
     best = neighbors[0]
-    bestValue = evaluate(best,p) #첫번째 후보만 봤을때. 초기화 일단하고. (neighbor[0] 해도되고). 첫번째값만 해서 초기화
+    bestValue = p.evaluate(best) #p없애고
     
     for i in range(1, len(neighbors)):
-        newValue = evaluate(neighbors[i],p) # 첫번째값 봤으니 두번째부터 봐야지(1부터 레인지 설정 해놨잖아 반복)
-        if newValue < bestValue: #작은게 더 좋은거징~ 최소값 찾기 로직. 알잖아 이건ㅎ
-            best = neighbors[i] #best 값도 넣어주고..
-            bestValue = newValue
-                    
+        newValue = p.evaluate(neighbors[i]) # p없애고
+        if newValue < bestValue: 
+            best = neighbors[i] 
+            bestValue = newValue                    
     return best, bestValue
 
 
-def displaySetting():
+def displaySetting(p):
     print()
     print("Search algorithm: Steepest-Ascent Hill Climbing")
     print()
-    print("Mutation step size:", DELTA)
+   #print("Mutation step size:", p._delta)    #get, set 해줘야한다. 권장법이 아니다. 되긴된다
+    print("Mutation step size:", p.getDelta()) #자바랑 달랑~~ public, private 이런게 구분이 안되니까. 
 main()

@@ -1,11 +1,11 @@
 #import numeric
 # numeric.
 
-from numeric import * #이렇게 하면 한방에 다 들여오니 numeric.createProblem() 이런식으로 다 안바꿔도된다.
+from Problem import Tsp #이렇게 하면 한방에 다 들여오니 numeric.createProblem() 이런식으로 다 안바꿔도된다.
 
 def main():
     # Create an instance of numerical optimization problem
-    p = createProblem()   # 'p': (expr, domain)
+    p = Tsp()   # 'p': (expr, domain)
     # Call the search algorithm
     solution, minimum = firstChoice(p)
     # Show the problem and algorithm settings

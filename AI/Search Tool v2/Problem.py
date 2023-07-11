@@ -114,7 +114,6 @@ class Numeric(Problem): #상위클래스가 있을때. TSP와 같은 super(부�
     
     
     
-    
     def randomMutant(self,current):
         i = random.randint(0, len(current)-1) #steepest ascent 후보들 중에 하나 랜덤 뽑는다 생각해~ current가 5가 나올테니 인덱스로 적용시키기 위해 -1
         if random.uniform(0,1)>0.5: #1/2확률보다 크면

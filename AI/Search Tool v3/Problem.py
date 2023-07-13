@@ -1,18 +1,23 @@
 import math
 import random 
+from setup import Setup
+
 
 #이건 어찌보면 라이브러리다. 객체 만들어서 누구나 꺼내 써.
 
 # interface
 class Problem:
     def __init__(self): #공식 클래스 생성시 호출되는 함수가 있다. init 메소드. 이건 무조건 만들어야. init가 생성자다.#self - 자기 자신의 object.들어가야한다. 암기
+       
+        Setup.__init__(self) #이거 없으면 오버라이딩이 되니까
+        
         #필요한 변수들을 또 저장 해야지
         #앞에서 꼭 썼던게 solution, value, NumEval      
         self._solution = [] #클래스의 변수임임을 self로 나타내준다. 
         self._value = 0 #앞에 언더바 : 클래스 변수다. 클래스 변수앞에 _ 붙이자 => 밖에 보이긴 싫다! 즉 private. 파이썬은 보통 다 public이니...
         self._numEval = 0 #자바의 this 가 여기의 self 이다.
         
-    def setVariable(self): #createProblem 역할.
+    def setVariables(self): #createProblem 역할.
         pass 
     
     def randomInit(self):
@@ -41,14 +46,11 @@ class Problem:
         
         
 class Numeric(Problem): #상위클래스가 있을때. TSP와 같은 super(부모)를 가진다. 메소드.
-    def __init__(self):
+    def __init__(self): #이거까지 Setup 할필요 없다. 바로 위에껏만 건들면 아래로 아래로 건너건너 된다.
         Problem.__init__(self) #Problem의 상속을 받고있으니. 상위꺼도 같이 당연히 호출해야, ###중요
         
         self._expression = ''
         self._domain = []
-        self._delta = 0.01
-        self._alpha = 0.01
-        self._dx = 0.0001
         
     def getDelta(self):
         return self._delta
@@ -60,7 +62,7 @@ class Numeric(Problem): #상위클래스가 있을때. TSP와 같은 super(부�
         return self._dx
 
         
-    def setVariable(self):      
+    def setVariables(self):      
         fileName = "problem/" + input("Enter the filename of function:(Convex, Ackley, Griewank) ") + ".txt"
         infile = open(fileName,'r')
         self._expression = infile.readline() #txt파일 공식적힌 첫째줄
@@ -211,7 +213,7 @@ class Tsp(Problem):
     
     
     
-    def setVariable(self):       
+    def setVariables(self):       
         fileName = "problem/tsp" + input("Enter the filename of function:") + ".txt"
         infile = open(fileName, 'r')
         

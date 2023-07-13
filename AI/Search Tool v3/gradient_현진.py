@@ -13,36 +13,47 @@ def main():
     p.storeResult(solution, minimum) #외부에서 steepest 돌린거니까, 업데이트 해줘야지. Problem.py의 solution, value에 업뎃해야 하니까. 그래서 storeResult를 만들어놨잖아
     p.report()
 
-def gradientDescent(p):   
-    current = p.randomInit() 
+
+def gradient(curr, next, p):
+    return (p.evaluate(next) - p.evaluate(curr)) / p.getDelta() * 10
+
+
+def gradientDescent(p):
+    delta = p.getDelta() / 10
+    current = p.randomInit() # 'current' is a list of values
     valueC = p.evaluate(current)
-    while True:        
-        successor = p.takeStep(current, valueC) #이미 계산 했는데.. 값만 전달하면 되겠네
-        valueS = p.evaluate(successor)       
-        if valueS >= valueC:
+    while True:
+        past = current[:]
+        for i in range(len(current)):
+            successor = p.mutate(current, i, delta)
+            grad = gradient(current, successor, p)
+            current[i] = current[i] - delta * grad #업데이트룰. x <- x-af(x)
+        valueC = p.evaluate(successor)
+        grad = gradient(past, current, p)
+        if abs(grad) == 0:
             break
-        else:
-            current = successor
-            valueC = valueS
     return current, valueC
 
-def takeStep(self, current, i, d): #gradient로 현재 시점에서 좋은걸 가면 되니까 bestof는 필요없다.
-    curCopy = current[:]
-    domain = self._domain       
-    l = domain[1][i]    
-    u = domain[2][i]     
-    if l <= (curCopy[i] + d) <= u:
-        curCopy[i] += d
-    return curCopy
 
 
 
+
+def bestOf(neighbors, p): ###
+    best = neighbors[0]
+    bestValue = p.evaluate(best) #p없애고
+    
+    for i in range(1, len(neighbors)):
+        newValue = p.evaluate(neighbors[i]) # p없애고
+        if newValue < bestValue: 
+            best = neighbors[i] 
+            bestValue = newValue                    
+    return best, bestValue
 
 
 def displaySetting(p):
     print()
-    print("Search algorithm: Gradient - descent Hill Climbing")
+    print("Search algorithm: Steepest-Ascent Hill Climbing")
     print()
    #print("Mutation step size:", p._delta)    #get, set 해줘야한다. 권장법이 아니다. 되긴된다
-    print("step size:", p.getAlpha()) #자바랑 달랑~~ public, private 이런게 구분이 안되니까. 
+    print("Mutation step size:", p.getDelta()) #자바랑 달랑~~ public, private 이런게 구분이 안되니까. 
 main()

@@ -36,12 +36,16 @@ def main():
 
 
     def build_model():
-        model = tf.keras.Sequential([
-            tf.keras.layers.Input(shape=(train_features.shape[1],)),
-            normalizer,
-            layers.Dense(units=1),
+        # model = tf.keras.Sequential([
+        #     tf.keras.layers.Input(shape=(train_features.shape[1],)),normalizer
+        #     ,layers.Dense(units=1),
             
-        ])
+        # ])
+        model = tf.keras.Sequential()
+        model.add(normalizer)
+        model.add(tf.keras.layers.Dense(units=8, activation='relu'))  # 첫 번째 Dense 층 추가
+        model.add(tf.keras.layers.Dense(units=4, activation='relu'))  # 두 번째 Dense 층 추가
+        model.add(tf.keras.layers.Dense(units=1))
         return model
 
 
@@ -60,7 +64,7 @@ def main():
         train_labels,
         epochs=100,
         # Suppress logging.
-        verbose=0,
+        verbose=2,
         # Calculate validation results on 20% of the training data.
         validation_split = 0.2)
 

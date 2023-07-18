@@ -28,7 +28,7 @@ def readValidPlan():  # Gradient Descent cannot solve TSP
 
 def readPlan():
     fileName = input("Enter the file name of experimental setting: ")
-    infile = open(fileName, 'r')
+    infile = open(fileName, 'r', encoding='UTF-8')
     parameters = { 'pType':0, 'pFileName':'', 'aType':0, 'delta':0,
                    'limitStuck':0, 'alpha':0, 'dx':0, 'numRestart':0,
                    'limitEval':0, 'numExp':0 }
@@ -104,6 +104,8 @@ def conductExperiment(p, alg):
     avgMinimum = sumOfMinimum / numExp
     avgNumEval = round(sumOfNumEval / numExp)
     # avgWhen = round(sumOfWhen / numExp)
+    # results = (bestSolution, bestMinimum, avgMinimum,
+    #            avgNumEval, sumOfNumEval, avgWhen)
     results = (bestSolution, bestMinimum, avgMinimum,
                avgNumEval, sumOfNumEval)#, avgWhen)
     p.storeExpResult(results)

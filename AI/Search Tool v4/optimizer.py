@@ -1,14 +1,49 @@
 from setup import Setup
-
+import random
 
 class HillClimbing:
     def __init__(self):
         Setup.__init__(self)
         self._pType = 0
-        self._limitStock = 100
+        self._limitStuck = 0
     
+        self._numExp = 0
+        self._numRestart = 0
+        
+    def setVariables(self, parameters):
+        Setup.setVariables(self, parameters)       
+        self._pType = parameters['pType']
+        self._limitStuck = parameters['limitStuck']
+        self._numExp = parameters['numExp']
+        self._numRestart = parameters['numRestart']
+        
+    def getNumExp(self):
+        return self._numExp  
+        
+        
     def run(self):
         pass
+    
+    def randomRestart(self, p):
+        self.run(p)#일단 한번 실행
+        bestSolution = p.getSolution()
+        bestMinimum = p.getValue()
+        numEval = p.getNumEval()
+        
+        for i in range(1, self._numRestart):
+            self.run(p)
+            newSolution = p.getSolution()
+            newMinimum = p.getValue()
+            numEval += p.getNumEval()
+            
+            if newMinimum < bestMinimum:
+                bestMinimum = newMinimum
+                bestSolution = newSolution
+        p.storeResult(bestSolution, bestMinimum) #얘가 실제 기록하고 싶은 값.
+            
+    
+    
+    
     
     def displaySetting(self):
         if self._pType == 1: #Numeric 일때
@@ -16,10 +51,11 @@ class HillClimbing:
             print("Mutation step size:", self._delta) #이거 p.getDelta 또 이렇게 가져와야해? 겟알파 계속 이런걸로 해야돼?
             #Problem과 main간에 있어야한다. 이거 두개의 상위클래스로. Setup라는 상위클래스로 하나 만들어서. 돌고 돌아왔다.
             
-            
-    def setVariables(self, pType):
-        self._pType = pType    
     
+    def displayNumExp(self):
+        print()
+        print("Number of experiments: ", self._numExp)
+
 
      
 class SteepestAscent(HillClimbing):
@@ -61,7 +97,7 @@ class FirstChoice(HillClimbing):
         current = p.randomInit()   # 'current' is a list of values
         valueC = p.evaluate(current)
         i = 0
-        while i < self._limitStock: #랜덤하게 일단 1개 썩세스 선택 하고, 좋아지기만 하면 업데이트
+        while i < self._limitStuck: #랜덤하게 일단 1개 썩세스 선택 하고, 좋아지기만 하면 업데이트
             successor = p.randomMutant(current)
             valueS = p.evaluate(successor)
             if valueS < valueC: #얘는 주변에 1개 선택. 좋아지면. 즉 작아지면 좋아지는 방향. 그럼 업데이트
@@ -77,7 +113,7 @@ class FirstChoice(HillClimbing):
         print()
         print("Search algorithm: First-Choice Hill Climbing")
         HillClimbing.displaySetting(self)
-        print("Max evaluations with no improvement: {0:,} iterations".format(self._limitStock))
+        print("Max evaluations with no improvement: {0:,} iterations".format(self._limitStuck))
     
     
 class GradientDescent(HillClimbing):    

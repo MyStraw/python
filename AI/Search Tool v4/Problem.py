@@ -8,7 +8,7 @@ from setup import Setup
 # interface
 class Problem:
     def __init__(self): #공식 클래스 생성시 호출되는 함수가 있다. init 메소드. 이건 무조건 만들어야. init가 생성자다.#self - 자기 자신의 object.들어가야한다. 암기
-       
+        
         Setup.__init__(self) #이거 없으면 오버라이딩이 되니까
         
         #필요한 변수들을 또 저장 해야지
@@ -17,8 +17,30 @@ class Problem:
         self._value = 0 #앞에 언더바 : 클래스 변수다. 클래스 변수앞에 _ 붙이자 => 밖에 보이긴 싫다! 즉 private. 파이썬은 보통 다 public이니...
         self._numEval = 0 #자바의 this 가 여기의 self 이다.
         
-    def setVariables(self): #createProblem 역할.
-        pass 
+        self._bestSolution = []
+        self._bestMinimum = 0.0
+        self._avgMinimum = 0.0
+        self._avgNumEval = 0
+        self._sumOfNumEval = 0
+        
+        self._pFileName = '' #Convex.txt 등등 파일 있었쟈냐 #얘는 업뎃 되네
+               
+        
+    def setVariables(self, parameters): #createProblem 역할. #셋업에 있는걸 호출해줘야겠징~        
+        self._pFileName = parameters['pFileName'] #이것만 하면 오버라이딩됨.
+        Setup.setVariables(self, parameters) 
+        #pass #pass 하면 overriding 돼서 아무것도 없게된다. 차라리 이 def를 다 주석처리 하면? setup에 있는걸 자동으로 상속한다.
+    
+    def getSolution(self):
+        return self._solution
+    
+    def getValue(self):
+        return self._value
+    
+    def getNumEval(self):
+        return self._numEval  
+        
+        
     
     def randomInit(self):
         pass  
@@ -39,9 +61,21 @@ class Problem:
         self._solution = solution
         self._value = value
     
+    def storeExpResult(self, results):
+        # self._bestSolution = results[0]
+        # self._bestMinimum = results[1]
+        # self._avgMinimum = results[2]
+        # self._avgNumEval = results[3]
+        # self._sumOfNumEval = results[4]
+
+        self._bestSolution, self._bestMinimum, self._avgMinimum, self._avgNumEval, self._sumOfNumEval = results
+        #둘이 똑같다. 튜플은 이런식으로 가능했쟈냐
+    
+    
     def report(self):         
         print()
-        print("Total number of evaluations: {0:,}".format(self._numEval))
+        #print("Total number of evaluations: {0:,}".format(self._numEval)) #numEval 두면 제일 마지막거만 출력되겠네
+        print("Average number of evaluations: {0:,}".format(self._avgNumEval))
         
         
         
@@ -52,19 +86,21 @@ class Numeric(Problem): #상위클래스가 있을때. TSP와 같은 super(부�
         self._expression = ''
         self._domain = []
         
-    def getDelta(self):
-        return self._delta
+    # def getDelta(self):
+    #     return self._delta
     
-    def getAlpha(self):
-        return self._alpha
+    # def getAlpha(self):
+    #     return self._alpha
     
-    def getDx(self):
-        return self._dx
+    # def getDx(self):
+    #     return self._dx
 
         
-    def setVariables(self):      
-        fileName = "problem/" + input("Enter the filename of function:(Convex, Ackley, Griewank) ") + ".txt"
-        infile = open(fileName,'r')
+    def setVariables(self, parameters):      
+        Problem.setVariables(self, parameters)
+        # fileName = "problem/" + input("Enter the filename of function:(Convex, Ackley, Griewank) ") + ".txt"
+        # infile = open(fileName,'r')
+        infile = open(self._pFileName, 'r')
         self._expression = infile.readline() #txt파일 공식적힌 첫째줄
         varName = []
         low = []
@@ -188,14 +224,17 @@ class Numeric(Problem): #상위클래스가 있을때. TSP와 같은 super(부�
     
     def report(self):    #solution은 이미 Problem에 정의됐잖아
         print()
-        print("Solution found:")
+        print("Average objective value: {0:,}".format(self._avgMinimum))
+        # print("Solution found:")
+        print("Best solution found:")
         print(self.coordinate())  # 변수가 있음 안되지. 밑에서 올려주잖아.
-        print("Minimum value: {0:,.3f}".format(self._value)) #minimum = self._value징
+        # print("Minimum value: {0:,.3f}".format(self._value)) #minimum = self._value징
+        print("Best minimum value: {0:,.3f}".format(self._bestMinimum))
         Problem.report(self) #super().report도 같다. #파이썬은 다중 상속이 되니까 이름 그대로 쓰는게 좋지 않을까.
         
     
     def coordinate(self):
-        c = [round(value, 3) for value in self._solution]
+        c = [round(value, 3) for value in self._bestSolution]
         return tuple(c)  # Convert the list to a tuple            
         
     
@@ -213,9 +252,11 @@ class Tsp(Problem):
     
     
     
-    def setVariables(self):       
-        fileName = "problem/tsp" + input("Enter the filename of function: (30, 50, 100)") + ".txt"
-        infile = open(fileName, 'r')
+    def setVariables(self,parameters):       
+        # fileName = "problem/tsp" + input("Enter the filename of function: (30, 50, 100)") + ".txt"
+        Problem.setVariables(self, parameters)
+        infile = open(self._pFileName, 'r')
+        # infile = open(fileName, 'r')
         
         self._numCities = int(infile.readline())
         self._locations = []
@@ -317,12 +358,11 @@ class Tsp(Problem):
  
     
     def report(self):   #오버라이딩 하고있는거다. 슈퍼클래스에 있는걸 안쓴다. 직접적으로 다 작성하되, 상속 받을것만 super(). 혹은 Problem. 으로 하면 되지
-        print()
-        print("Best order of visits:")
+        print()        
+        print("Average tour costs: {0:,}".format(round(self._avgMinimum)))
+        print("Best of best order of visits:")
         self.tenPerRow()       # Print 10 cities per row, #self._solution 없애면 되겠네. 아래에서 해주니까.
-        print("Minimum tour cost: {0:,}".format(round(self._value)))              
-        print()
-        print("Total number of evaluations: {0:,}".format(self._numEval))
+        print("Best minimum tour cost: {0:,}".format(round(self._bestMinimum)))                     
         Problem.report(self)
         
     def tenPerRow(self):

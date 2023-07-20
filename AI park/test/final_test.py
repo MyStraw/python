@@ -26,13 +26,12 @@ class Evaluator:
         #split으로 csv 값 구분해서 저장    
        
         infile = open(filename, 'r')        
-        lines = infile.readline()   
-        eqn =[]
+        lines = infile.readlines()   
+        self._eqn =[]
         for line in lines:
-            eqn = line.split(',')
-            susick = eqn[0]
-            x = eqn[1]         
-            y = eqn[2]                
+            words = line.split(',')
+            self._eqn.append(words)          
+            # return eqn 아 이거 그렇게 하는거 아니징
 
     def solve(self, idx): #0을 넣으면 0번째 수식값, 1을 넣으면 1번째 수식 값
         """
@@ -45,16 +44,17 @@ class Evaluator:
             solve 내부에는 logging이나 print 사용하지 말 것
         """
         #exec 또는 eval을 잘 쓰면 됨.
-        p = Evaluator()
-        eqn = p[0]
-        x = p[1]
-        y = p[2]
-        solves = eval(p[0])
-        print(solves)
+
+        # p = Evaluator() 리턴 받아서 쓰고 그런거 아니쟈냐
+        eqn = self._eqn[idx]
+        susick = eqn[0]      
+        x = int(eqn[1])
+        y = int(eqn[2])
         
-        exec('x=' + eqn[1])
-        exec('y=' + eqn[2])
-        eval(eqn[0])
+        # exec('x=' + x)
+        # exec('y=' + y)
+        solve = eval(susick)
+        return solve
         
 def main(): #이건 수정 하지망~
     evaluator = Evaluator('equations.txt') 

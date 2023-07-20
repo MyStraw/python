@@ -1,0 +1,2 @@
+ERROR:root:Error:30
+CRITICAL:root:Critical:30

@@ -10,6 +10,13 @@ def measure(func):  # 이건 밑에두개 다 한사람만 해보셈~~
     decorator function
     logging을 이용해 x값, y값, 계산값 을 출력할 수 있는 기능을 추가
     """
+    def wrapper(self, *args, **kwargs):
+        result = func(self, *args, **kwargs)  # solve 함수 호출하고 그 결과 갖고오기
+        x = self._eqn[args[0]][1]  # x 값
+        y = self._eqn[args[0]][2]  # y 값
+        logging.info(f"x의 값: {x}, y의 값: {y}, 계산된 값: {result}")
+        return result  # solve 함수의결과를 반환
+    return wrapper
 
 
 class Evaluator:
@@ -34,7 +41,7 @@ class Evaluator:
             jool = line.split(",")
             self._eqn.append(jool)
             # return eqn 아 이거 그렇게 하는거 아니징
-
+    @measure
     def solve(self, idx):  # 0을 넣으면 0번째 수식값, 1을 넣으면 1번째 수식 값
         """
         idx 번째 수식을 계산한 값을 반환

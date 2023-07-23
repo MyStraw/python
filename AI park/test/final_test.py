@@ -56,7 +56,7 @@ class Evaluator:
         # exec('x=' + x)
         # exec('y=' + y)
         solve = eval(susick)
-        return solve
+        # return solve
 
 
 def main():  # 이건 수정 하지망~
